@@ -21,6 +21,29 @@ const AnimatedTouchableOpacity =
 const PRIMARY_COLOR = "#130057";
 const SECONDARY_COLOR = "#fff";
 
+const baseHeaderOptions = {
+  headerTitle: "Stalker",
+  headerStyle: {
+    backgroundColor: "#f9f6ed",
+    elevation: 0,
+    shadowOpacity: 0,
+    borderBottomWidth: 0,
+  },
+  headerTitleAlign: "center",
+  headerTintColor: "#130057",
+  headerTitleStyle: { fontWeight: "bold" },
+  headerRight: () => (
+    <View style={{ marginRight: wp("5%") }}>
+      <AntDesign name="setting" size={30} color="black" />
+    </View>
+  ),
+  headerLeft: () => (
+    <View style={{ marginLeft: wp("5%") }}>
+      <MaterialCommunityIcons name="crown" size={30} color="black" />
+    </View>
+  ),
+};
+
 const Tab = createBottomTabNavigator();
 
 function CustomBottomNav({ state, descriptors, navigation }) {
@@ -98,44 +121,22 @@ function BottomNav() {
       tabBar={(props) => <CustomBottomNav {...props} />}
       screenOptions={{
         tabBarShowLabel: false,
-        headerTitle: "Stalker",
-        headerStyle: {
-          backgroundColor: "#f9f6ed",
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 0,
-        },
-        headerTitleAlign: "center",
-        headerTintColor: "#130057",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-        headerRight: () => (
-          <View style={{ marginRight: wp("5%") }}>
-            <AntDesign name="setting" size={30} color="black" />
-          </View>
-        ),
-        headerLeft: () => (
-          <View style={{ marginLeft: wp("5%") }}>
-            <MaterialCommunityIcons name="crown" size={30} color="black" />
-          </View>
-        ),
       }}
     >
       <Tab.Screen
         name="PastScreen"
         component={PastScreen}
-        options={{ title: "Past" }}
+        options={{ ...baseHeaderOptions, title: "Past" }}
       />
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
-        options={{ title: "Home" }}
+        options={{ title: "Home", headerShown: false }}
       />
       <Tab.Screen
         name="CalendarScreen"
         component={CalenderScreen}
-        options={{ title: "Calendar" }}
+        options={{ ...baseHeaderOptions, title: "Calendar" }}
       />
     </Tab.Navigator>
   );
