@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import CalenderScreen from "../screens/CalenderScreen";
-import HomeScreen from "../screens/HomeScreen";
+import HomeStack from "./HomeStack";
 import PastScreen from "../screens/PastScreen";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -80,7 +80,7 @@ function CustomBottomNav({ state, descriptors, navigation }) {
 
   function getIconByRouteName(routeName, color) {
     switch (routeName) {
-      case "HomeScreen":
+      case "HomeStack":
         return <AntDesign name="home" size={24} color={color} />;
       case "CalendarScreen":
         return <AntDesign name="calendar" size={24} color={color} />;
@@ -128,8 +128,8 @@ function BottomNav() {
         options={{ title: "Past" }}
       />
       <Tab.Screen
-        name="HomeScreen"
-        component={HomeScreen}
+        name="HomeStack"
+        component={HomeStack}
         options={{ title: "Home" }}
       />
       <Tab.Screen
