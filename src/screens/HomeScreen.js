@@ -17,8 +17,8 @@ export default function HomeScreen({ navigation }) {
       }}
     >
       <Pressable
-        onPress={() => navigation.navigate("MoodStack")}
-        style={{ height: wp("65%") }}
+        onPress={() => navigation.getParent()?.navigate("MainMoodScreen")}
+        style={{ height: wp("67%") }}
         className="bg-[#b9e7fa] rounded-2xl "
       >
         <Image

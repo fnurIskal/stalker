@@ -1,7 +1,6 @@
 import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../screens/HomeScreen";
-import MoodStack from "./MoodStack";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -36,11 +35,6 @@ export default function HomeStack() {
             </View>
           ),
         }}
-      />
-      <Stack.Screen
-        name="MoodStack"
-        component={MoodStack}
-        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

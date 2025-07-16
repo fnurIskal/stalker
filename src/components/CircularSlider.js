@@ -95,7 +95,7 @@ export default function CircularSlider({ changeIndex }) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, gap: wp("10%") }}>
       <Animated.Image
         entering={FadeIn.duration(500)}
         exiting={FadeOut.duration(500)}

@@ -18,8 +18,8 @@ export default function MoodSelectPage({ navigation }) {
         backgroundColor: "#f9f6ed",
         // padding: wp("4%"),
         alignItems: "center",
-        gap: wp("7%"),
-        paddingBottom: hp("20%"),
+        gap: wp("15%"),
+        paddingBottom: hp("12%"),
       }}
     >
       <Text className="font-bold text-4xl color-[#130057]">
@@ -31,7 +31,7 @@ export default function MoodSelectPage({ navigation }) {
         style={{ width: wp("50%"), height: wp("15%") }}
         onPress={() => {
           console.log(mood);
-          navigation.navigate("MoreDetail");
+          navigation.navigate("DetailedMoodScreen");
         }}
       >
         <Animated.Text
