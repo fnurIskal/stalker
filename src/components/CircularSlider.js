@@ -1,13 +1,5 @@
-import {
-  View,
-  Dimensions,
-  Image,
-  FlatList,
-  Text,
-  Pressable,
-} from "react-native";
+import { View, Dimensions, Image, Pressable } from "react-native";
 import { useEffect, useState, useRef } from "react";
-import DefaultEmojis from "../data/DefaultImages";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -23,6 +15,7 @@ import Animated, {
   clamp,
   Extrapolate,
 } from "react-native-reanimated";
+import { useSelector } from "react-redux";
 
 const { width } = Dimensions.get("screen");
 const _itemSize = width * 0.2;
@@ -67,6 +60,8 @@ function CarouselItem({ imageUri, index, scrollX }) {
 }
 
 export default function CircularSlider({ changeIndex }) {
+  const selectedType = useSelector((state) => state.mood?.value);
+
   const scrollX = useSharedValue(0);
   const flatListRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -74,7 +69,7 @@ export default function CircularSlider({ changeIndex }) {
     scrollX.value = clamp(
       event.contentOffset.x / _itemTotalSize,
       0,
-      DefaultEmojis.length - 1
+      selectedType.data.length - 1
     );
     const newActiveIndex = Math.round(scrollX.value);
 
@@ -100,12 +95,13 @@ export default function CircularSlider({ changeIndex }) {
         entering={FadeIn.duration(500)}
         exiting={FadeOut.duration(500)}
         key={`image-${activeIndex}`}
-        source={DefaultEmojis[activeIndex].file}
+        source={selectedType.data[activeIndex].file}
         style={{
           width: wp("60%"),
           height: wp("60%"),
           alignSelf: "center",
           marginBottom: wp("10%"),
+          resizeMode: "contain",
         }}
       />
       <Animated.FlatList
@@ -115,7 +111,7 @@ export default function CircularSlider({ changeIndex }) {
           paddingHorizontal: (width - _itemSize) / 2,
           gap: _spacing,
         }}
-        data={DefaultEmojis}
+        data={selectedType.data}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item, index }) => (
           <Pressable onPress={() => onItemPress(index)}>

@@ -1,15 +1,32 @@
-import { View, Text, Image, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import DefaultEmojis from "../../data/DefaultImages";
 import CircularSlider from "../../components/CircularSlider";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useSelector } from "react-redux";
 
 export default function MoodSelectPage({ navigation }) {
-  const [mood, setMood] = useState(DefaultEmojis[0]);
+  const selectedType = useSelector((state) => state.mood?.value);
+
+  if (!selectedType || !Array.isArray(selectedType.data)) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#f9f6ed",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text>Yükleniyor...</Text>
+      </View>
+    );
+  }
+
+  const [mood, setMood] = useState(selectedType?.data[0]);
 
   return (
     <View
@@ -25,12 +42,13 @@ export default function MoodSelectPage({ navigation }) {
       <Text className="font-bold text-4xl color-[#130057]">
         What is your mood?
       </Text>
-      <CircularSlider changeIndex={(index) => setMood(DefaultEmojis[index])} />
+      <CircularSlider
+        changeIndex={(index) => setMood(selectedType.data[index])}
+      />
       <Pressable
         className="bg-[#130057] rounded-xl items-center justify-center"
         style={{ width: wp("50%"), height: wp("15%") }}
         onPress={() => {
-          console.log(mood);
           navigation.navigate("DetailedMoodScreen");
         }}
       >

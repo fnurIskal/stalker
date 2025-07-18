@@ -2,12 +2,11 @@ import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../screens/HomeScreen";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
-export default function HomeStack() {
-  const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
+export default function HomeStack() {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -27,11 +26,6 @@ export default function HomeStack() {
           headerRight: () => (
             <View style={{ marginRight: wp("5%") }}>
               <AntDesign name="setting" size={30} color="black" />
-            </View>
-          ),
-          headerLeft: () => (
-            <View style={{ marginLeft: wp("5%") }}>
-              <MaterialCommunityIcons name="crown" size={30} color="black" />
             </View>
           ),
         }}

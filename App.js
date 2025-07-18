@@ -8,6 +8,9 @@ import MoreDetailPage from "./src/screens/Mood/MoreDetailPage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { TouchableOpacity } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { PaperProvider } from "react-native-paper";
+import { Provider } from "react-redux";
+import { store } from "./src/redux/store";
 
 const Stack = createStackNavigator();
 
@@ -75,10 +78,14 @@ function AppStack() {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <AppStack />
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <PaperProvider>
+            <AppStack />
+          </PaperProvider>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </Provider>
   );
 }

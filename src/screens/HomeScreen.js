@@ -1,12 +1,49 @@
-import { View, Text, Image, FlatList, Pressable } from "react-native";
-import React from "react";
+import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
+import { useState, useLayoutEffect } from "react";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import WeekCalendar from "../components/WeekCalendar";
-import DefaultEmojis from "../data/DefaultImages";
+import { useSelector } from "react-redux";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import PremiumModal from "../components/PremiumModal";
 
 export default function HomeScreen({ navigation }) {
-  const topRow = DefaultEmojis.slice(0, 4);
-  const bottomRow = DefaultEmojis.slice(4);
+  const selectedMood = useSelector((state) => state.mood.value);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  if (!selectedMood || !Array.isArray(selectedMood.data)) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#f9f6ed",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text>Yükleniyor...</Text>
+      </View>
+    );
+  }
+
+  const openPremiumModal = () => {
+    setModalVisible(true);
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={openPremiumModal}
+          style={{ marginLeft: wp("5%") }}
+        >
+          <MaterialCommunityIcons name="crown" size={30} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
+  const topRow = selectedMood.data.slice(0, 4);
+  const bottomRow = selectedMood.data.slice(4);
 
   return (
     <View
@@ -17,7 +54,7 @@ export default function HomeScreen({ navigation }) {
       }}
     >
       <Pressable
-        onPress={() => navigation.getParent()?.navigate("MainMoodScreen")}
+        onPress={() => navigation.navigate("MainMoodScreen")}
         style={{ height: wp("67%") }}
         className="bg-[#b9e7fa] rounded-2xl "
       >
@@ -80,6 +117,10 @@ export default function HomeScreen({ navigation }) {
         </View>
       </Pressable>
       {/* <WeekCalendar /> */}
+      <PremiumModal
+        visible={modalVisible}
+        onDissmis={() => setModalVisible(false)}
+      />
     </View>
   );
 }
