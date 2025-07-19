@@ -1,16 +1,15 @@
 import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useEffect, useCallback } from "react";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import WeekCalendar from "../components/WeekCalendar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import PremiumModal from "../components/PremiumModal";
-
 export default function HomeScreen({ navigation }) {
-  const selectedMood = useSelector((state) => state.mood.value);
+  const selectedEmojiType = useSelector((state) => state.mood.value);
   const [modalVisible, setModalVisible] = useState(false);
-
-  if (!selectedMood || !Array.isArray(selectedMood.data)) {
+  console.log(selectedEmojiType.name);
+  if (!selectedEmojiType || !Array.isArray(selectedEmojiType.data)) {
     return (
       <View
         style={{
@@ -42,8 +41,8 @@ export default function HomeScreen({ navigation }) {
     });
   }, [navigation]);
 
-  const topRow = selectedMood.data.slice(0, 4);
-  const bottomRow = selectedMood.data.slice(4);
+  const topRow = selectedEmojiType.data.slice(0, 4);
+  const bottomRow = selectedEmojiType.data.slice(4);
 
   return (
     <View

@@ -9,12 +9,28 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { TouchableOpacity } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { PaperProvider } from "react-native-paper";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { store } from "./src/redux/store";
+import { useFocusEffect } from "@react-navigation/native";
+import { GetEmojiType } from "./src/services/AsyncMoodSave";
+import { useCallback } from "react";
+import { AllEmojis } from "./src/data/DefaultImages";
+import { changeMood } from "./src/redux/slices/MoodSlice";
 
 const Stack = createStackNavigator();
 
 function AppStack() {
+  const dispatch = useDispatch();
+  useFocusEffect(
+    useCallback(() => {
+      const fetchMood = async () => {
+        const emoji = await GetEmojiType();
+        dispatch(changeMood(emoji || AllEmojis[0]));
+      };
+      fetchMood();
+    }, [])
+  );
+
   return (
     <Stack.Navigator>
       <Stack.Screen

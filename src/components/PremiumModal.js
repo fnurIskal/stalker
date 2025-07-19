@@ -9,10 +9,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { AllEmojis } from "../data/DefaultImages";
 import { changeMood } from "../redux/slices/MoodSlice";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { EmojiTypeSave } from "../services/AsyncMoodSave";
 
 export default function PremiumModal({ visible, onDissmis }) {
   const selectedMood = useSelector((state) => state.mood.value);
   const dispatch = useDispatch();
+  const handleSave = async (item) => {
+    dispatch(changeMood(item));
+    await EmojiTypeSave(item);
+  };
 
   return (
     <Portal>
@@ -57,7 +62,9 @@ export default function PremiumModal({ visible, onDissmis }) {
 
           {AllEmojis.map((item, index) => (
             <Pressable
-              onPress={() => dispatch(changeMood(item))}
+              onPress={() => {
+                handleSave(item);
+              }}
               style={{
                 paddingVertical: wp("1%"),
                 width: wp("85%"),

@@ -21,11 +21,12 @@ import Camera from "../../components/Camera";
 import * as ImagePicker from "expo-image-picker";
 import { insertMoodWithMedia } from "../../services/MoodService";
 
-export default function MoreDetailPage({ route }) {
+export default function MoreDetailPage({ route, navigation }) {
   const [audioUri, setAudioUri] = useState(null);
   const [quickNote, setQuickNote] = useState("");
   const [cameraOn, setCameraOn] = useState(false);
   const [photo, setPhoto] = useState(null);
+  const [isPressed, setIsPressed] = useState(false);
 
   const moodType = route?.params?.moodType ?? "default";
 
@@ -53,6 +54,8 @@ export default function MoreDetailPage({ route }) {
 
   const handleAddMood = async () => {
     await insertMoodWithMedia(moodType.value, quickNote, photo, audioUri);
+    setIsPressed(true);
+    navigation.navigate("BottomNav", { screen: "PastScreen" });
   };
 
   return (
@@ -178,8 +181,13 @@ export default function MoreDetailPage({ route }) {
               </View>
             </View>
             <Pressable
-              className="bg-[#130057] rounded-xl items-center justify-center"
-              style={{ width: wp("50%"), height: wp("15%") }}
+              disabled={isPressed ? true : false}
+              className="rounded-xl items-center justify-center"
+              style={{
+                width: wp("50%"),
+                height: wp("15%"),
+                backgroundColor: isPressed ? "#ccc" : "#130057",
+              }}
               onPress={handleAddMood}
             >
               <Text className="color-white text-2xl font-medium">Save</Text>

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { AllEmojis } from "../../data/DefaultImages";
+
 export const moodSlice = createSlice({
   name: "mood",
   initialState: {
@@ -13,5 +14,4 @@ export const moodSlice = createSlice({
 });
 
 export const { changeMood } = moodSlice.actions;
-
 export default moodSlice.reducer;

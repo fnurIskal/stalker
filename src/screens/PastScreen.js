@@ -1,4 +1,11 @@
-import { View, Text, Image, Pressable, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import {
   widthPercentageToDP as wp,
@@ -8,20 +15,29 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { getMyMoods } from "../services/MoodService";
 import { Audio } from "expo-av";
 import dayjs from "dayjs";
-import emojiMap from "../../assets/emojiMap";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
+import { useSelector } from "react-redux";
 
 export default function PastScreen() {
   const [moods, setMoods] = useState(null);
+  const selectedEmojiType = useSelector((state) => state.mood.value);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const moods = await getMyMoods();
-      console.log(moods);
-      setMoods(moods);
-    };
-    fetchData();
-  }, []);
+  const getEmojiFile = (selectedEmojiType, moodType) => {
+    return selectedEmojiType?.data.find((item) => item.value === moodType)
+      ?.file;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const moods = await getMyMoods();
+        setMoods(moods);
+      };
+      fetchData();
+    }, [])
+  );
 
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -36,8 +52,8 @@ export default function PastScreen() {
 
   if (!moods)
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#000" />
       </View>
     );
 
@@ -68,11 +84,15 @@ export default function PastScreen() {
             }}
           >
             <Image
-              source={emojiMap[mood.mood_type]}
-              style={{ width: wp("13%"), height: wp("13%") }}
+              source={getEmojiFile(selectedEmojiType, mood.mood_type)}
+              style={{
+                width: wp("13%"),
+                height: wp("13%"),
+                resizeMode: "contain",
+              }}
             />
             <View>
-              <Text className="font-medium text-xl">I feel happy today!</Text>
+              <Text className="font-medium text-xl">{`I feel ${mood.mood_type} today!`}</Text>
               <Text className="font-light text-xs">
                 {dayjs(mood.created_at).format("YYYY-MM-DD HH:mm")}
               </Text>
