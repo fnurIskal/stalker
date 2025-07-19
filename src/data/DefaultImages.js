@@ -46,6 +46,102 @@ const DefaultEmojis = {
   ],
 };
 
+const GhostEmojis = {
+  name: "Ghost",
+  data: [
+    {
+      name: "Happy",
+      file: require("../../assets/emojis/ghost/happy.png"),
+      value: "happy",
+      slogan: "I am happy",
+    },
+    {
+      name: "Angry",
+      file: require("../../assets/emojis/ghost/angry.png"),
+      value: "angry",
+      slogan: "I am angry",
+    },
+    {
+      name: "Bored",
+      file: require("../../assets/emojis/ghost/bored.png"),
+      value: "bored",
+      slogan: "I am bored",
+    },
+    {
+      name: "Motivated",
+      file: require("../../assets/emojis/ghost/motivated.png"),
+      value: "motivated",
+      slogan: "I am motivated",
+    },
+    {
+      name: "Sad",
+      file: require("../../assets/emojis/ghost/sad.png"),
+      value: "sad",
+      slogan: "I am sad",
+    },
+    {
+      name: "Stressed",
+      file: require("../../assets/emojis/ghost/stressed.png"),
+      value: "stressed",
+      slogan: "I am stressed",
+    },
+    {
+      name: "Tired",
+      file: require("../../assets/emojis/ghost/tired.png"),
+      value: "tired",
+      slogan: "I am tired",
+    },
+  ],
+};
+
+const CatEmojis = {
+  name: "Cat",
+  data: [
+    {
+      name: "Happy",
+      file: require("../../assets/emojis/cat/happy.png"),
+      value: "happy",
+      slogan: "I am happy",
+    },
+    {
+      name: "Angry",
+      file: require("../../assets/emojis/cat/angry.png"),
+      value: "angry",
+      slogan: "I am angry",
+    },
+    {
+      name: "Bored",
+      file: require("../../assets/emojis/cat/bored.png"),
+      value: "bored",
+      slogan: "I am bored",
+    },
+    {
+      name: "Motivated",
+      file: require("../../assets/emojis/cat/motivated.png"),
+      value: "motivated",
+      slogan: "I am motivated",
+    },
+    {
+      name: "Sad",
+      file: require("../../assets/emojis/cat/sad.png"),
+      value: "sad",
+      slogan: "I am sad",
+    },
+    {
+      name: "Stressed",
+      file: require("../../assets/emojis/cat/stressed.png"),
+      value: "stressed",
+      slogan: "I am stressed",
+    },
+    {
+      name: "Tired",
+      file: require("../../assets/emojis/cat/tired.png"),
+      value: "tired",
+      slogan: "I am tired",
+    },
+  ],
+};
+
 const PumpkinEmojis = {
   name: "Pumpkin",
   data: [
@@ -93,4 +189,5 @@ const PumpkinEmojis = {
     },
   ],
 };
-export const AllEmojis = [DefaultEmojis, PumpkinEmojis];
+
+export const AllEmojis = [DefaultEmojis, PumpkinEmojis, GhostEmojis, CatEmojis];

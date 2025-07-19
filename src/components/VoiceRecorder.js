@@ -4,7 +4,7 @@ import { Audio } from "expo-av";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
-export default function VoiceRecorder() {
+export default function VoiceRecorder({ onRecordingComplete }) {
   const [recordedUri, setRecordedUri] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const recordingRef = useRef(null);
@@ -45,6 +45,10 @@ export default function VoiceRecorder() {
 
       setRecordedUri(uri);
       setIsRecording(false);
+
+      if (onRecordingComplete && typeof onRecordingComplete === "function") {
+        onRecordingComplete(uri);
+      }
     } catch (err) {
       console.error("Failed to stop recording", err);
     }

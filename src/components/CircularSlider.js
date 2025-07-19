@@ -52,7 +52,8 @@ function CarouselItem({ imageUri, index, scrollX }) {
         style={{
           width: _itemSize,
           height: _itemSize,
-          borderRadius: _itemSize / 2,
+          // borderRadius: _itemSize / 4,
+          resizeMode: "contain",
         }}
       />
     </Animated.View>

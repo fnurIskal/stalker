@@ -107,7 +107,11 @@ export default function HomeScreen({ navigation }) {
                 >
                   <Image
                     source={item.file}
-                    style={{ width: wp("7%"), height: wp("7%") }}
+                    style={{
+                      width: wp("7%"),
+                      height: wp("7%"),
+                      resizeMode: "contain",
+                    }}
                   />
                   <Text className="font-light text-sm">{item.name}</Text>
                 </View>

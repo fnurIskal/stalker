@@ -49,7 +49,7 @@ export default function MoodSelectPage({ navigation }) {
         className="bg-[#130057] rounded-xl items-center justify-center"
         style={{ width: wp("50%"), height: wp("15%") }}
         onPress={() => {
-          navigation.navigate("DetailedMoodScreen");
+          navigation.navigate("DetailedMoodScreen", { moodType: mood });
         }}
       >
         <Animated.Text

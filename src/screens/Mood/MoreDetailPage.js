@@ -19,11 +19,15 @@ import { useState, useEffect } from "react";
 import VoiceRecorder from "../../components/VoiceRecorder";
 import Camera from "../../components/Camera";
 import * as ImagePicker from "expo-image-picker";
+import { insertMoodWithMedia } from "../../services/MoodService";
 
-export default function MoreDetailPage() {
+export default function MoreDetailPage({ route }) {
+  const [audioUri, setAudioUri] = useState(null);
   const [quickNote, setQuickNote] = useState("");
   const [cameraOn, setCameraOn] = useState(false);
   const [photo, setPhoto] = useState(null);
+
+  const moodType = route?.params?.moodType ?? "default";
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -45,6 +49,10 @@ export default function MoreDetailPage() {
     if (!result.canceled) {
       setPhoto(result.assets[0].uri);
     }
+  };
+
+  const handleAddMood = async () => {
+    await insertMoodWithMedia(moodType.value, quickNote, photo, audioUri);
   };
 
   return (
@@ -109,7 +117,9 @@ export default function MoreDetailPage() {
               </View>
               <View style={{ gap: wp("3%") }}>
                 <Text className="font-medium text-base">Voice Memo</Text>
-                <VoiceRecorder />
+                <VoiceRecorder
+                  onRecordingComplete={(uri) => setAudioUri(uri)}
+                />
               </View>
               <View style={{ gap: wp("3%") }}>
                 <Text className="font-medium text-base">Photo</Text>
@@ -170,9 +180,7 @@ export default function MoreDetailPage() {
             <Pressable
               className="bg-[#130057] rounded-xl items-center justify-center"
               style={{ width: wp("50%"), height: wp("15%") }}
-              onPress={() => {
-                console.log(quickNote);
-              }}
+              onPress={handleAddMood}
             >
               <Text className="color-white text-2xl font-medium">Save</Text>
             </Pressable>
