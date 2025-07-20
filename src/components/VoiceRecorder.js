@@ -1,97 +1,139 @@
-import { useState, useRef } from "react";
-import { Pressable, Text } from "react-native";
-import { Audio } from "expo-av";
+import { useState, useRef, useEffect } from "react";
+import { View, Text, Pressable, Alert } from "react-native";
+import {
+  useAudioRecorder,
+  useAudioPlayer,
+  useAudioPlayerStatus,
+  RecordingPresets,
+  AudioModule,
+  setAudioModeAsync,
+} from "expo-audio";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
 
 export default function VoiceRecorder({ onRecordingComplete }) {
   const [recordedUri, setRecordedUri] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
-  const recordingRef = useRef(null);
-  const soundRef = useRef(null);
+  const pressInTimerRef = useRef(null);
 
-  const startRecording = async () => {
+  const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+
+  const player = useAudioPlayer(recordedUri ? { uri: recordedUri } : null);
+  const playerState = useAudioPlayerStatus(player);
+
+  const record = async () => {
     try {
-      const permission = await Audio.requestPermissionsAsync();
-      if (permission.status !== "granted") {
-        alert("Recording permission is required!");
-        return;
-      }
-
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-
-      const newRecording = new Audio.Recording();
-      await newRecording.prepareToRecordAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
-      await newRecording.startAsync();
-
-      recordingRef.current = newRecording;
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record();
       setIsRecording(true);
-    } catch (err) {
-      console.error("Failed to start recording", err);
+    } catch (error) {
+      Alert.alert("Kayıt başlatılamadı", error.message);
     }
   };
 
   const stopRecording = async () => {
     try {
-      if (!recordingRef.current) return;
-
-      await recordingRef.current.stopAndUnloadAsync();
-      const uri = recordingRef.current.getURI();
-
-      setRecordedUri(uri);
+      await audioRecorder.stop();
       setIsRecording(false);
 
-      if (onRecordingComplete && typeof onRecordingComplete === "function") {
-        onRecordingComplete(uri);
+      const uri = audioRecorder.uri;
+      if (uri) {
+        setRecordedUri(uri);
+        if (onRecordingComplete) onRecordingComplete(uri);
+      } else {
+        Alert.alert("Kayıt URI bulunamadı.");
       }
-    } catch (err) {
-      console.error("Failed to stop recording", err);
+    } catch (error) {
+      Alert.alert("Kayıt durdurulamadı", error.message);
     }
   };
 
-  const playSound = async () => {
-    try {
-      if (soundRef.current) {
-        await soundRef.current.unloadAsync();
-        soundRef.current = null;
-      }
+  const handlePressIn = () => {
+    pressInTimerRef.current = setTimeout(() => {
+      record();
+    }, 200);
+  };
 
-      const { sound } = await Audio.Sound.createAsync({ uri: recordedUri });
-      soundRef.current = sound;
-      await sound.playAsync();
-    } catch (err) {
-      console.error("Error playing sound", err);
+  const handlePressOut = () => {
+    clearTimeout(pressInTimerRef.current);
+    if (isRecording) {
+      stopRecording();
     }
   };
+
+  const handleDelete = () => {
+    setRecordedUri(null);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const status = await AudioModule.requestRecordingPermissionsAsync();
+      if (!status.granted) {
+        Alert.alert("Mikrofon izni verilmedi.");
+      }
+
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: true,
+      });
+    })();
+  }, []);
 
   return (
-    <>
-      <Pressable
-        onPressIn={startRecording}
-        onPressOut={stopRecording}
-        className="flex-row rounded-xl items-center justify-center"
-        style={{
-          width: wp("85%"),
-          height: wp("15%"),
-          gap: wp("3%"),
-          backgroundColor: isRecording ? "red" : "white",
-        }}
-      >
-        <FontAwesome6 name="microphone-lines" size={24} color="#130057" />
-        <Text className="font-normal">
-          {isRecording ? "Recording..." : "Hold to Record"}
-        </Text>
-      </Pressable>
-      {recordedUri && (
-        <Pressable onPress={playSound}>
-          <Text>Play Recorded Audio</Text>
+    <View>
+      {recordedUri && player ? (
+        <View
+          className="flex-row rounded-xl items-center justify-between px-4"
+          style={{
+            width: wp("85%"),
+            height: wp("15%"),
+            backgroundColor: "white",
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              if (playerState?.playing) {
+                player.pause();
+              } else {
+                player.seekTo(0);
+                player.play();
+              }
+            }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: wp("3%"),
+            }}
+          >
+            <AntDesign
+              name={playerState?.playing ? "pausecircleo" : "play"}
+              size={30}
+              color="black"
+            />
+            <Text>{playerState?.playing ? "Playing..." : "Tap to Play"}</Text>
+          </Pressable>
+          <Pressable onPress={handleDelete}>
+            <Feather name="trash-2" size={24} color="red" />
+          </Pressable>
+        </View>
+      ) : (
+        <Pressable
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          className="flex-row rounded-xl items-center justify-center"
+          style={{
+            width: wp("85%"),
+            height: wp("15%"),
+            gap: wp("3%"),
+            backgroundColor: isRecording ? "red" : "white",
+          }}
+        >
+          <FontAwesome6 name="microphone-lines" size={24} color="#130057" />
+          <Text>{isRecording ? "Recording..." : "Hold to Record"}</Text>
         </Pressable>
       )}
-    </>
+    </View>
   );
 }

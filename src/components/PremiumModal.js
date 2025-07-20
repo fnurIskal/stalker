@@ -1,5 +1,4 @@
 import { View, Text, Image, Pressable } from "react-native";
-import React, { useState } from "react";
 import { Portal, Modal } from "react-native-paper";
 import {
   widthPercentageToDP as wp,
@@ -17,6 +16,7 @@ export default function PremiumModal({ visible, onDissmis }) {
   const handleSave = async (item) => {
     dispatch(changeMood(item));
     await EmojiTypeSave(item);
+    onDissmis();
   };
 
   return (

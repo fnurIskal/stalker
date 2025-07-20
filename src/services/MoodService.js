@@ -41,7 +41,8 @@ export const getMyMoods = async () => {
   const { data, error } = await supabase
     .from("daily_moods")
     .select("*")
-    .eq("device_id", deviceId);
+    .eq("device_id", deviceId)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Mood verileri çekilemedi:", error.message);

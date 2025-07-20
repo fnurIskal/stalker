@@ -6,7 +6,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -19,10 +19,14 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function PastScreen() {
   const [moods, setMoods] = useState(null);
   const selectedEmojiType = useSelector((state) => state.mood.value);
+  const [currentPlayingId, setCurrentPlayingId] = useState(null);
+  const soundRef = useRef(null);
 
   const getEmojiFile = (selectedEmojiType, moodType) => {
     return selectedEmojiType?.data.find((item) => item.value === moodType)
@@ -39,15 +43,39 @@ export default function PastScreen() {
     }, [])
   );
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const togglePlay = async (mood) => {
+    try {
+      // Eğer şu an bu mood çalıyor → durdur
+      if (currentPlayingId === mood.id) {
+        await soundRef.current?.stopAsync();
+        await soundRef.current?.unloadAsync();
+        soundRef.current = null;
+        setCurrentPlayingId(null);
+      } else {
+        // Başka bir ses çalıyorsa onu durdur
+        if (soundRef.current) {
+          await soundRef.current.stopAsync();
+          await soundRef.current.unloadAsync();
+        }
 
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
+        // Yeni sesi oluştur ve çal
+        const { sound } = await Audio.Sound.createAsync({
+          uri: mood.audio_url,
+        });
+        soundRef.current = sound;
+        await sound.playAsync();
+        setCurrentPlayingId(mood.id);
 
-  const playAudio = async (uri) => {
-    const { sound } = await Audio.Sound.createAsync({ uri });
-    await sound.playAsync();
+        sound.setOnPlaybackStatusUpdate((status) => {
+          if (status.didJustFinish) {
+            setCurrentPlayingId(null);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Ses oynatılırken hata:", error);
+      setCurrentPlayingId(null);
+    }
   };
 
   if (!moods)
@@ -77,25 +105,34 @@ export default function PastScreen() {
           }}
         >
           <View
+            className="flex-row items-center justify-between"
             style={{
-              alignItems: "center",
-              flexDirection: "row",
               gap: wp("3%"),
             }}
           >
-            <Image
-              source={getEmojiFile(selectedEmojiType, mood.mood_type)}
-              style={{
-                width: wp("13%"),
-                height: wp("13%"),
-                resizeMode: "contain",
-              }}
-            />
-            <View>
-              <Text className="font-medium text-xl">{`I feel ${mood.mood_type} today!`}</Text>
-              <Text className="font-light text-xs">
-                {dayjs(mood.created_at).format("YYYY-MM-DD HH:mm")}
-              </Text>
+            <View className="flex-row items-center" style={{ gap: wp("1%") }}>
+              <Image
+                source={getEmojiFile(selectedEmojiType, mood.mood_type)}
+                style={{
+                  width: wp("13%"),
+                  height: wp("13%"),
+                  resizeMode: "contain",
+                }}
+              />
+              <View>
+                <Text className="font-medium text-xl">{`I feel ${mood.mood_type} today!`}</Text>
+                <Text className="font-light text-xs">
+                  {dayjs(mood.created_at).format("YYYY-MM-DD HH:mm")}
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row items-center" style={{ gap: wp("2%") }}>
+              <Ionicons name="share-social" size={20} color="black" />
+              <MaterialCommunityIcons
+                name="dots-vertical"
+                size={24}
+                color="black"
+              />
             </View>
           </View>
           {/* note */}
@@ -144,7 +181,6 @@ export default function PastScreen() {
               </View>
             </>
           )}
-
           {/* voice */}
           {mood.audio_url && (
             <View>
@@ -169,17 +205,18 @@ export default function PastScreen() {
               >
                 <Pressable
                   onPress={() => {
-                    togglePlay();
-                    playAudio(mood.audio_url);
+                    console.log(mood.audio_url);
+                    togglePlay(mood);
                   }}
                 >
                   <AntDesign
-                    name={isPlaying ? "pausecircleo" : "play"}
+                    name={
+                      currentPlayingId === mood.id ? "pausecircleo" : "play"
+                    }
                     size={30}
                     color="black"
                   />
                 </Pressable>
-
                 {/* Dalga görünümü */}
                 <View
                   style={{
@@ -188,27 +225,24 @@ export default function PastScreen() {
                     gap: 4,
                   }}
                 >
-                  {[12, 20, 16, 24, 18, 14, 22].map((height, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        width: 4,
-                        height: height,
-                        backgroundColor: isPlaying ? "#3750a0" : "#999",
-                        borderRadius: 2,
-                      }}
-                    />
-                  ))}
+                  {[12, 20, 16, 24, 18, 14, 22, 12, 20, 16, 24, 18, 14, 22].map(
+                    (height, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          width: 4,
+                          height: height,
+                          backgroundColor:
+                            currentPlayingId === mood.id ? "#3750a0" : "#999",
+                          borderRadius: 2,
+                        }}
+                      />
+                    )
+                  )}
                 </View>
-
-                {/* Süre */}
-                <Text style={{ marginLeft: 15, color: "#555", fontSize: 14 }}>
-                  00:12
-                </Text>
               </View>
             </View>
           )}
-
           {/* image */}
           {mood.photo_url && (
             <>
