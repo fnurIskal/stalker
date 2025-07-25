@@ -16,6 +16,8 @@ import { GetEmojiType } from "./src/services/AsyncMoodSave";
 import { useCallback } from "react";
 import { AllEmojis } from "./src/data/DefaultImages";
 import { changeMood } from "./src/redux/slices/MoodSlice";
+import AllHabitsScreen from "./src/screens/Habit/AllHabitsScreen";
+import CreateHabitScreen from "./src/screens/Habit/CreateHabitScreen";
 
 const Stack = createStackNavigator();
 
@@ -88,6 +90,52 @@ function AppStack() {
           ),
         })}
       />
+      <Stack.Screen
+        name="AllHabitsScreen"
+        component={AllHabitsScreen}
+        options={({ navigation }) => ({
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: "#f9f6ed",
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
+          },
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: wp("5%") }}
+            >
+              <Ionicons
+                name="arrow-undo-circle-outline"
+                size={30}
+                color="black"
+              />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen name="CreateHabitScreen" component={CreateHabitScreen} options={({ navigation }) => ({
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: "#f9f6ed",
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
+          },
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: wp("5%") }}
+            >
+              <Ionicons
+                name="arrow-undo-circle-outline"
+                size={30}
+                color="black"
+              />
+            </TouchableOpacity>
+          ),
+        })} />
     </Stack.Navigator>
   );
 }

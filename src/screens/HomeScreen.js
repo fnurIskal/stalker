@@ -44,6 +44,26 @@ export default function HomeScreen({ navigation }) {
   const topRow = selectedEmojiType.data.slice(0, 4);
   const bottomRow = selectedEmojiType.data.slice(4);
 
+  const CategoryPill = ({ icon, label }) => (
+    <View
+      style={{
+        alignItems: "center",
+        marginHorizontal: wp("1%"),
+        flexDirection: "row",
+        backgroundColor: "#fffae6",
+        gap: wp("1%"),
+        borderRadius: 12,
+        paddingHorizontal: wp("2%"),
+        paddingVertical: wp("1%"),
+        borderWidth: 1,
+        borderColor: "#3e8440",
+      }}
+    >
+      <MaterialCommunityIcons name={icon} size={24} color="black" />
+      <Text className="font-light text-sm">{label}</Text>
+    </View>
+  );
+
   return (
     <View
       style={{
@@ -55,27 +75,27 @@ export default function HomeScreen({ navigation }) {
       <Pressable
         onPress={() => navigation.navigate("MainMoodScreen")}
         style={{ height: wp("67%") }}
-        className="bg-[#b9e7fa] rounded-2xl "
+        className="bg-[#fcf6dd] rounded-2xl elevation-xl"
       >
         <Image
           style={{
             position: "absolute",
             right: wp("-6%"),
             top: wp("-6%"),
-            width: wp("45%"),
-            height: wp("45%"),
+            width: wp("43%"),
+            height: wp("43%"),
           }}
           source={require("../../assets/stalkerIcon.png")}
         />
         <Text
           style={{ padding: wp("4%"), paddingTop: wp("10%") }}
-          className="font-extrabold text-4xl"
+          className="font-extrabold text-4xl color-[#3e8440]"
         >
           How Are You{"\n"}Feeling Today?
         </Text>
         <Text
           style={{ paddingHorizontal: wp("4%") }}
-          className="font-light text-sm"
+          className="font-light text-sm color-[#3e8440]"
         >
           Press and Select Your Mood
         </Text>
@@ -97,11 +117,13 @@ export default function HomeScreen({ navigation }) {
                     alignItems: "center",
                     marginHorizontal: wp("1%"),
                     flexDirection: "row",
-                    backgroundColor: "#cdedfa",
+                    backgroundColor: "#fffae6",
                     gap: wp("1%"),
                     borderRadius: 12,
                     paddingHorizontal: wp("1%"),
                     paddingVertical: wp("1%"),
+                    borderWidth: 1,
+                    borderColor: "#3e8440",
                   }}
                 >
                   <Image
@@ -117,6 +139,72 @@ export default function HomeScreen({ navigation }) {
               ))}
             </View>
           ))}
+        </View>
+      </Pressable>
+      {/* Habit Tracker */}
+      <Pressable
+        onPress={() => navigation.navigate("AllHabitsScreen")}
+        style={{ height: wp("67%"), marginTop: wp("5%") }}
+        className="bg-[#fcf6dd] rounded-2xl elevation-xl"
+      >
+        <Image
+          style={{
+            position: "absolute",
+            left: wp("-9%"),
+            top: wp("-4%"),
+            width: wp("43%"),
+            height: wp("43%"),
+          }}
+          source={require("../../assets/stalkerIcon.png")}
+        />
+        <Text
+          style={{ paddingHorizontal: wp("4%"), paddingTop: wp("5%") }}
+          className="font-extrabold self-end text-4xl color-[#3e8440]"
+        >
+          Did You Keep Up
+        </Text>
+        <Text
+          style={{ paddingHorizontal: wp("4%") }}
+          className="font-extrabold self-end text-4xl color-[#3e8440]"
+        >
+          Today?
+        </Text>
+        <Text
+          style={{ padding: wp("3%") }}
+          className="font-light self-end text-sm color-[#3e8440]"
+        >
+          Build Your Streak Today
+        </Text>
+        <View
+          style={{
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: wp("3%"),
+            marginTop: wp("5%"),
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              marginBottom: wp("2%"),
+              width: wp("90%"),
+            }}
+          >
+            <CategoryPill icon="brain" label="Personal" />
+            <CategoryPill icon="meditation" label="Health" />
+            <CategoryPill icon="wallet" label="Financial" />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              width: wp("80%"),
+            }}
+          >
+            <CategoryPill icon="palette" label="Hobby" />
+            <CategoryPill icon="stop-circle" label="Addiction" />
+          </View>
         </View>
       </Pressable>
       {/* <WeekCalendar /> */}

@@ -73,7 +73,7 @@ export default function PastScreen() {
         });
       }
     } catch (error) {
-      console.error("Ses oynatılırken hata:", error);
+      // console.error("Ses oynatılırken hata:", error);
       setCurrentPlayingId(null);
     }
   };
@@ -89,7 +89,7 @@ export default function PastScreen() {
     <ScrollView
       style={{
         flex: 1,
-        backgroundColor: "red",
+        backgroundColor: "#f9f6ed",
         padding: wp("4%"),
       }}
       contentContainerStyle={{ gap: wp("5%"), paddingBottom: hp("20%") }}
@@ -99,7 +99,15 @@ export default function PastScreen() {
           key={index}
           style={{
             flex: 1,
-            backgroundColor: "#f9f6e0",
+            backgroundColor: "#fbf7ea",
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 6,
+            elevation: 4, // Android için
             padding: wp("3%"),
             borderRadius: 12,
           }}
@@ -205,7 +213,7 @@ export default function PastScreen() {
               >
                 <Pressable
                   onPress={() => {
-                    console.log(mood.audio_url);
+                    // console.log(mood.audio_url);
                     togglePlay(mood);
                   }}
                 >

@@ -18,7 +18,7 @@ import Animated, {
 const AnimatedTouchableOpacity =
   Animated.createAnimatedComponent(TouchableOpacity);
 
-const PRIMARY_COLOR = "#130057";
+const PRIMARY_COLOR = "#3e8440";
 const SECONDARY_COLOR = "#fff";
 
 const baseHeaderOptions = {
