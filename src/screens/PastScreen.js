@@ -1,89 +1,18 @@
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
-import { useState, useRef } from "react";
+import { ScrollView } from "react-native";
+import { useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { getMyMoods } from "../services/MoodService";
-import { Audio } from "expo-av";
-import dayjs from "dayjs";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
-import { useSelector } from "react-redux";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { SegmentedButtons } from "react-native-paper";
+import PastMoodsScreen from "../components/PastMoodsScreen";
+import PastHabitsScreen from "../components/PastHabitsScreen";
+import { useRoute } from "@react-navigation/native";
 
 export default function PastScreen() {
-  const [moods, setMoods] = useState(null);
-  const selectedEmojiType = useSelector((state) => state.mood.value);
-  const [currentPlayingId, setCurrentPlayingId] = useState(null);
-  const soundRef = useRef(null);
-
-  const getEmojiFile = (selectedEmojiType, moodType) => {
-    return selectedEmojiType?.data.find((item) => item.value === moodType)
-      ?.file;
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        const moods = await getMyMoods();
-        setMoods(moods);
-      };
-      fetchData();
-    }, [])
-  );
-
-  const togglePlay = async (mood) => {
-    try {
-      // Eğer şu an bu mood çalıyor → durdur
-      if (currentPlayingId === mood.id) {
-        await soundRef.current?.stopAsync();
-        await soundRef.current?.unloadAsync();
-        soundRef.current = null;
-        setCurrentPlayingId(null);
-      } else {
-        // Başka bir ses çalıyorsa onu durdur
-        if (soundRef.current) {
-          await soundRef.current.stopAsync();
-          await soundRef.current.unloadAsync();
-        }
-
-        // Yeni sesi oluştur ve çal
-        const { sound } = await Audio.Sound.createAsync({
-          uri: mood.audio_url,
-        });
-        soundRef.current = sound;
-        await sound.playAsync();
-        setCurrentPlayingId(mood.id);
-
-        sound.setOnPlaybackStatusUpdate((status) => {
-          if (status.didJustFinish) {
-            setCurrentPlayingId(null);
-          }
-        });
-      }
-    } catch (error) {
-      // console.error("Ses oynatılırken hata:", error);
-      setCurrentPlayingId(null);
-    }
-  };
-
-  if (!moods)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#000" />
-      </View>
-    );
+  const route = useRoute();
+  const { screenName } = route.params || {};
+  const [screen, setScreen] = useState(screenName || "moods");
 
   return (
     <ScrollView
@@ -94,188 +23,30 @@ export default function PastScreen() {
       }}
       contentContainerStyle={{ gap: wp("5%"), paddingBottom: hp("20%") }}
     >
-      {moods.map((mood, index) => (
-        <View
-          key={index}
-          style={{
-            flex: 1,
-            backgroundColor: "#fbf7ea",
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 4,
+      <SegmentedButtons
+        value={screen}
+        onValueChange={setScreen}
+        buttons={[
+          {
+            value: "moods",
+            label: "Moods",
+            style: {
+              backgroundColor: screen === "moods" ? "#3e8440" : "white",
             },
-            shadowOpacity: 0.1,
-            shadowRadius: 6,
-            elevation: 4, // Android için
-            padding: wp("3%"),
-            borderRadius: 12,
-          }}
-        >
-          <View
-            className="flex-row items-center justify-between"
-            style={{
-              gap: wp("3%"),
-            }}
-          >
-            <View className="flex-row items-center" style={{ gap: wp("1%") }}>
-              <Image
-                source={getEmojiFile(selectedEmojiType, mood.mood_type)}
-                style={{
-                  width: wp("13%"),
-                  height: wp("13%"),
-                  resizeMode: "contain",
-                }}
-              />
-              <View>
-                <Text className="font-medium text-xl">{`I feel ${mood.mood_type} today!`}</Text>
-                <Text className="font-light text-xs">
-                  {dayjs(mood.created_at).format("YYYY-MM-DD HH:mm")}
-                </Text>
-              </View>
-            </View>
-            <View className="flex-row items-center" style={{ gap: wp("2%") }}>
-              <Ionicons name="share-social" size={20} color="black" />
-              <MaterialCommunityIcons
-                name="dots-vertical"
-                size={24}
-                color="black"
-              />
-            </View>
-          </View>
-          {/* note */}
-          {mood.mood_desc && (
-            <>
-              <Text
-                style={{
-                  marginTop: wp("5%"),
-                  marginBottom: wp("2%"),
-                }}
-                className="font-bold text-sm"
-              >
-                My Note
-              </Text>
-              <View
-                style={{ padding: wp("5%") }}
-                className="bg-[#fdfdf5] rounded-xl border border-gray-300 relative overflow-hidden"
-              >
-                <SimpleLineIcons
-                  style={{
-                    position: "absolute",
-                    top: 5,
-                    right: 5,
-                  }}
-                  name="pin"
-                  size={12}
-                  color="black"
-                />
-                {Array.from({ length: 15 }).map((_, index) => (
-                  <View
-                    key={index}
-                    style={{
-                      position: "absolute",
-                      left: 0,
-                      right: 0,
-                      top: index * 20,
-                      height: 1,
-                      backgroundColor: "#dcdcdc",
-                    }}
-                  />
-                ))}
-
-                <Text className="text-base leading-[20px]">
-                  {mood.mood_desc}
-                </Text>
-              </View>
-            </>
-          )}
-          {/* voice */}
-          {mood.audio_url && (
-            <View>
-              <Text
-                style={{
-                  marginTop: wp("5%"),
-                  marginBottom: wp("2%"),
-                }}
-                className="font-bold text-sm"
-              >
-                My Voice
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  backgroundColor: "#f0f0f0",
-                  padding: 15,
-                  borderRadius: 12,
-                  marginVertical: 10,
-                }}
-              >
-                <Pressable
-                  onPress={() => {
-                    // console.log(mood.audio_url);
-                    togglePlay(mood);
-                  }}
-                >
-                  <AntDesign
-                    name={
-                      currentPlayingId === mood.id ? "pausecircleo" : "play"
-                    }
-                    size={30}
-                    color="black"
-                  />
-                </Pressable>
-                {/* Dalga görünümü */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginLeft: 15,
-                    gap: 4,
-                  }}
-                >
-                  {[12, 20, 16, 24, 18, 14, 22, 12, 20, 16, 24, 18, 14, 22].map(
-                    (height, index) => (
-                      <View
-                        key={index}
-                        style={{
-                          width: 4,
-                          height: height,
-                          backgroundColor:
-                            currentPlayingId === mood.id ? "#3750a0" : "#999",
-                          borderRadius: 2,
-                        }}
-                      />
-                    )
-                  )}
-                </View>
-              </View>
-            </View>
-          )}
-          {/* image */}
-          {mood.photo_url && (
-            <>
-              <Text
-                style={{
-                  marginTop: wp("5%"),
-                  marginBottom: wp("2%"),
-                }}
-                className="font-bold text-sm"
-              >
-                My Image
-              </Text>
-              <Image
-                source={{ uri: mood.photo_url }}
-                style={{
-                  width: wp("35%"),
-                  height: wp("35%"),
-                  margin: wp("3%"),
-                  borderRadius: 12,
-                }}
-              />
-            </>
-          )}
-        </View>
-      ))}
+            checkedColor: screen === "moods" ? "white" : "#3e8440",
+          },
+          {
+            value: "habits",
+            label: "Habits",
+            style: {
+              backgroundColor: screen === "habits" ? "#3e8440" : "white",
+            },
+            checkedColor: screen === "habits" ? "white" : "#3e8440",
+          },
+        ]}
+      />
+      {screen === "moods" && <PastMoodsScreen />}
+      {screen === "habits" && <PastHabitsScreen />}
     </ScrollView>
   );
 }

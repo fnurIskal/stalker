@@ -143,7 +143,7 @@ export default function HomeScreen({ navigation }) {
       </Pressable>
       {/* Habit Tracker */}
       <Pressable
-        onPress={() => navigation.navigate("AllHabitsScreen")}
+        onPress={() => navigation.navigate("HabitSelectPage")}
         style={{ height: wp("67%"), marginTop: wp("5%") }}
         className="bg-[#fcf6dd] rounded-2xl elevation-xl"
       >

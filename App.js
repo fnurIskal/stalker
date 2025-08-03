@@ -12,12 +12,11 @@ import { PaperProvider } from "react-native-paper";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./src/redux/store";
 import { useFocusEffect } from "@react-navigation/native";
-import { GetEmojiType } from "./src/services/AsyncMoodSave";
+import { GetEmojiType } from "./src/services/AsyncEmojiTypeSave";
 import { useCallback } from "react";
 import { AllEmojis } from "./src/data/DefaultImages";
 import { changeMood } from "./src/redux/slices/MoodSlice";
-import AllHabitsScreen from "./src/screens/Habit/AllHabitsScreen";
-import CreateHabitScreen from "./src/screens/Habit/CreateHabitScreen";
+import HabitSelectPage from "./src/screens/Habit/HabitSelectPage";
 
 const Stack = createStackNavigator();
 
@@ -91,8 +90,8 @@ function AppStack() {
         })}
       />
       <Stack.Screen
-        name="AllHabitsScreen"
-        component={AllHabitsScreen}
+        name="HabitSelectPage"
+        component={HabitSelectPage}
         options={({ navigation }) => ({
           headerTitle: "",
           headerStyle: {
@@ -115,27 +114,6 @@ function AppStack() {
           ),
         })}
       />
-      <Stack.Screen name="CreateHabitScreen" component={CreateHabitScreen} options={({ navigation }) => ({
-          headerTitle: "",
-          headerStyle: {
-            backgroundColor: "#f9f6ed",
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: wp("5%") }}
-            >
-              <Ionicons
-                name="arrow-undo-circle-outline"
-                size={30}
-                color="black"
-              />
-            </TouchableOpacity>
-          ),
-        })} />
     </Stack.Navigator>
   );
 }

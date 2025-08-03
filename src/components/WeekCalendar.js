@@ -24,7 +24,6 @@ const WeekCalendar = () => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
         gap: wp("1.5%"),
-        paddingHorizontal: wp("1%"),
       }}
       style={{ maxHeight: wp("25%") }}
       keyExtractor={(item) => item.date}
@@ -41,8 +40,7 @@ const WeekCalendar = () => {
               justifyContent: "center",
               borderWidth: 1,
               borderColor: "#ccc",
-              width: wp("11%"),
-              height: wp("20%"),
+              width: wp("11.5%"),
             }}
           >
             <Text style={{ color: "black", fontSize: 12 }}>{item.label}</Text>

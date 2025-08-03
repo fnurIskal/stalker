@@ -36,18 +36,3 @@ export const uploadFile = async (localUri, pathName) => {
     return null;
   }
 };
-
-// export const getSignedPhotoUrl = async (path) => {
-//   const supabase = await getSupabaseClient();
-
-//   const { data, error } = await supabase.storage
-//     .from("moods")
-//     .createSignedUrl(path, 86400);
-
-//   if (error) {
-//     console.error("Foto signed URL hatası:", error.message);
-//     return null;
-//   }
-
-//   return data.signedUrl;
-// };

@@ -17,8 +17,6 @@ export const insertMoodWithMedia = async (
   const photoUrl = photoUri ? await uploadFile(photoUri, photoPath) : null;
   const audioUrl = audioUri ? await uploadFile(audioUri, audioPath) : null;
 
-  console.log(photoUrl + "/" + audioUrl);
-
   const { error } = await supabase.from("daily_moods").insert({
     mood_type: moodType,
     mood_desc: moodDesc,
@@ -48,6 +46,5 @@ export const getMyMoods = async () => {
     console.error("Mood verileri çekilemedi:", error.message);
     return [];
   }
-  console.log(data);
   return data;
 };

@@ -1,15 +1,13 @@
-// supabaseClient.js
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@env";
 import * as Application from "expo-application";
 
-export const getDeviceId = () => {
-  return Application.getAndroidId(); // sadece Android'de çalışır
+export const getDeviceId = async () => {
+  return Application.getAndroidId();
 };
 
-export const getSupabaseClient = () => {
-  const deviceId = getDeviceId();
-  console.log("🟢 device-id header gönderiliyor:", deviceId);
+export const getSupabaseClient = async () => {
+  const deviceId = await getDeviceId();
 
   return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     global: {

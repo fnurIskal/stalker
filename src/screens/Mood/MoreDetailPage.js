@@ -55,7 +55,10 @@ export default function MoreDetailPage({ route, navigation }) {
   const handleAddMood = async () => {
     await insertMoodWithMedia(moodType.value, quickNote, photo, audioUri);
     setIsPressed(true);
-    navigation.navigate("BottomNav", { screen: "PastScreen" });
+    navigation.navigate("BottomNav", {
+      screen: "PastScreen",
+      params: { screenName: "moods" },
+    });
   };
 
   return (

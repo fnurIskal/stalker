@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AllEmojis } from "../data/DefaultImages";
 import { changeMood } from "../redux/slices/MoodSlice";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { EmojiTypeSave } from "../services/AsyncMoodSave";
+import { EmojiTypeSave } from "../services/AsyncEmojiTypeSave";
 
 export default function PremiumModal({ visible, onDissmis }) {
   const selectedMood = useSelector((state) => state.mood.value);
