@@ -7,9 +7,22 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { HabitCategoryColors } from "../data/HabitCategoryColors";
 import { LinearGradient } from "expo-linear-gradient";
 
+const getContrastingTextColor = (hexColor) => {
+  if (!hexColor || !hexColor.startsWith("#")) {
+    return "#ffffff"; // Varsayılan olarak beyaz
+  }
+  const r = parseInt(hexColor.slice(1, 3), 16);
+  const g = parseInt(hexColor.slice(3, 5), 16);
+  const b = parseInt(hexColor.slice(5, 7), 16);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 150 ? "#000000" : "#ffffff";
+};
+
 export default function NewHabitScreen({ onSelect }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [name, setName] = useState("");
+
+  const selectedTextColor = getContrastingTextColor(selectedItem?.color1);
 
   return (
     <>
@@ -43,29 +56,37 @@ export default function NewHabitScreen({ onSelect }) {
                 width: wp("85%"),
               }}
             >
-              {HabitCategoryColors.map((item, index) => (
-                <Pressable
-                  style={{ width: wp("40%") }}
-                  key={index}
-                  onPress={() => setSelectedItem(item)}
-                >
-                  <LinearGradient
-                    colors={[item?.color1 || "#ccc", item?.color2 || "#999"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={{
-                      flex: 1,
-                      paddingHorizontal: wp("4%"),
-                      borderRadius: 12,
-                      height: wp("18%"),
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+              {HabitCategoryColors.map((item, index) => {
+                const textColor = getContrastingTextColor(item.color1);
+                return (
+                  <Pressable
+                    style={{ width: wp("40%") }}
+                    key={index}
+                    onPress={() => setSelectedItem(item)}
                   >
-                    <Text className="font-bold text-xl">{item.category}</Text>
-                  </LinearGradient>
-                </Pressable>
-              ))}
+                    <LinearGradient
+                      colors={[item?.color1 || "#ccc", item?.color2 || "#999"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={{
+                        flex: 1,
+                        paddingHorizontal: wp("4%"),
+                        borderRadius: 12,
+                        height: wp("18%"),
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text
+                        className="font-bold text-xl"
+                        style={{ color: textColor }}
+                      >
+                        {item.category}
+                      </Text>
+                    </LinearGradient>
+                  </Pressable>
+                );
+              })}
             </View>
           ) : (
             <LinearGradient
@@ -84,7 +105,12 @@ export default function NewHabitScreen({ onSelect }) {
                 justifyContent: "center",
               }}
             >
-              <Text className="font-bold text-xl">{selectedItem.category}</Text>
+              <Text
+                className="font-bold text-xl"
+                style={{ color: selectedTextColor }}
+              >
+                {selectedItem.category}
+              </Text>
               <Pressable
                 style={{
                   position: "absolute",

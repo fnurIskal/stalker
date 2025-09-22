@@ -16,6 +16,17 @@ import { HabitCategoryColors } from "../data/HabitCategoryColors";
 import { LinearGradient } from "expo-linear-gradient";
 import { ProgressBar } from "react-native-paper";
 
+const getContrastingTextColor = (hexColor) => {
+  if (!hexColor || !hexColor.startsWith("#")) {
+    return "#ffffff";
+  }
+  const r = parseInt(hexColor.slice(1, 3), 16);
+  const g = parseInt(hexColor.slice(3, 5), 16);
+  const b = parseInt(hexColor.slice(5, 7), 16);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 150 ? "#000000" : "#ffffff";
+};
+
 export default function UpdateHabitScreen({ onUpdate }) {
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [completedHabits, setCompletedHabits] = useState([]);
@@ -98,6 +109,7 @@ export default function UpdateHabitScreen({ onUpdate }) {
           const categoryColor = HabitCategoryColors.find(
             (c) => c.category === habit.habit_category
           );
+          const textColor = getContrastingTextColor(categoryColor?.color1);
 
           return (
             <Pressable
@@ -127,12 +139,16 @@ export default function UpdateHabitScreen({ onUpdate }) {
                 }}
               >
                 <View style={{ gap: wp("2%") }}>
-                  <Text className="font-medium">{habit.habit_name}</Text>
+                  <Text className="font-medium" style={{ color: textColor }}>
+                    {habit.habit_name}
+                  </Text>
                   <View
                     className="rounded-3xl"
                     style={{
-                      backgroundColor: categoryColor?.color2,
-                      opacity: 0.75,
+                      backgroundColor:
+                        textColor === "#000000"
+                          ? "rgba(0, 0, 0, 0.1)"
+                          : "rgba(255, 255, 255, 0.2)",
                     }}
                   >
                     <Text
@@ -140,6 +156,7 @@ export default function UpdateHabitScreen({ onUpdate }) {
                       style={{
                         paddingVertical: wp("1%"),
                         paddingHorizontal: wp("1.5%"),
+                        color: textColor,
                       }}
                     >
                       {habit.habit_category}
@@ -171,6 +188,7 @@ export default function UpdateHabitScreen({ onUpdate }) {
           const categoryColor = HabitCategoryColors.find(
             (c) => c.category === habit.habit_category
           );
+          const textColor = getContrastingTextColor(categoryColor?.color1);
 
           return (
             <Pressable key={index} className="flex-row items-center w-full">
@@ -193,14 +211,19 @@ export default function UpdateHabitScreen({ onUpdate }) {
                 }}
               >
                 <View style={{ gap: wp("2%") }}>
-                  <Text className="font-medium line-through color-[gray]">
+                  <Text
+                    className="font-medium line-through"
+                    style={{ color: textColor, opacity: 0.7 }}
+                  >
                     {habit.habit_name}
                   </Text>
                   <View
                     className="rounded-3xl"
                     style={{
-                      backgroundColor: categoryColor?.color2,
-                      opacity: 0.75,
+                      backgroundColor:
+                        textColor === "#000000"
+                          ? "rgba(0, 0, 0, 0.1)"
+                          : "rgba(255, 255, 255, 0.2)",
                     }}
                   >
                     <Text
@@ -208,6 +231,7 @@ export default function UpdateHabitScreen({ onUpdate }) {
                       style={{
                         paddingVertical: wp("1%"),
                         paddingHorizontal: wp("1.5%"),
+                        color: textColor,
                       }}
                     >
                       {habit.habit_category}

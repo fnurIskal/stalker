@@ -1,5 +1,5 @@
-import { ScrollView } from "react-native";
-import { useState } from "react";
+import { View, TouchableOpacity } from "react-native";
+import { useState, useLayoutEffect } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -7,21 +7,43 @@ import {
 import { SegmentedButtons } from "react-native-paper";
 import PastMoodsScreen from "../components/PastMoodsScreen";
 import PastHabitsScreen from "../components/PastHabitsScreen";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import PremiumModal from "../components/PremiumModal";
 
 export default function PastScreen() {
   const route = useRoute();
+  const navigation = useNavigation();
   const { screenName } = route.params || {};
   const [screen, setScreen] = useState(screenName || "moods");
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const openPremiumModal = () => {
+    setModalVisible(true);
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={openPremiumModal}
+          style={{ marginLeft: wp("5%") }}
+        >
+          <MaterialCommunityIcons name="crown" size={30} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   return (
-    <ScrollView
+    <View
       style={{
         flex: 1,
         backgroundColor: "#f9f6ed",
-        padding: wp("4%"),
+        paddingHorizontal: wp("4%"),
+        paddingTop: wp("4%"),
+        gap: wp("5%"),
       }}
-      contentContainerStyle={{ gap: wp("5%"), paddingBottom: hp("20%") }}
     >
       <SegmentedButtons
         value={screen}
@@ -47,6 +69,10 @@ export default function PastScreen() {
       />
       {screen === "moods" && <PastMoodsScreen />}
       {screen === "habits" && <PastHabitsScreen />}
-    </ScrollView>
+      <PremiumModal
+        visible={modalVisible}
+        onDissmis={() => setModalVisible(false)}
+      />
+    </View>
   );
 }

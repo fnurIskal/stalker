@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import CalenderScreen from "../screens/CalenderScreen";
 import HomeStack from "./HomeStack";
 import PastScreen from "../screens/PastScreen";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -8,135 +7,118 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import Animated, {
-  FadeIn,
-  FadeOut,
-  LinearTransition,
+  useAnimatedStyle,
+  withSpring,
 } from "react-native-reanimated";
 
-const AnimatedTouchableOpacity =
-  Animated.createAnimatedComponent(TouchableOpacity);
-
 const PRIMARY_COLOR = "#3e8440";
-const SECONDARY_COLOR = "#fff";
-
-const baseHeaderOptions = {
-  headerTitle: "Stalker",
-  headerStyle: {
-    backgroundColor: "#f9f6ed",
-    elevation: 0,
-    shadowOpacity: 0,
-    borderBottomWidth: 0,
-  },
-  headerTitleAlign: "center",
-  headerTintColor: "#130057",
-  headerTitleStyle: { fontWeight: "bold" },
-  headerRight: () => (
-    <View style={{ marginRight: wp("5%") }}>
-      <AntDesign name="setting" size={30} color="black" />
-    </View>
-  ),
-  headerLeft: () => (
-    <View style={{ marginLeft: wp("5%") }}>
-      <MaterialCommunityIcons name="crown" size={30} color="black" />
-    </View>
-  ),
-};
+const ACTIVE_COLOR = "#fff";
+const INACTIVE_COLOR = "rgba(255, 255, 255, 0.7)";
 
 const Tab = createBottomTabNavigator();
+
+function getIconByRouteName(routeName, color) {
+  switch (routeName) {
+    case "HomeStack":
+      return <AntDesign name="home" size={24} color={color} />;
+    case "PastScreen":
+      return <AntDesign name="folderopen" size={24} color={color} />;
+    default:
+      return <AntDesign name="home" size={24} color={color} />;
+  }
+}
+
+const AnimatedTabItem = ({ isFocused, onPress, label, routeName }) => {
+  const animatedPillStyle = useAnimatedStyle(() => {
+    return {
+      opacity: withSpring(isFocused ? 1 : 0),
+      transform: [{ scale: withSpring(isFocused ? 1 : 0.5) }],
+    };
+  });
+
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.tabItem}>
+      <Animated.View style={[styles.activePill, animatedPillStyle]} />
+      <View style={{ alignItems: "center", gap: 4 }}>
+        {getIconByRouteName(
+          routeName,
+          isFocused ? ACTIVE_COLOR : INACTIVE_COLOR
+        )}
+        <Text
+          style={[
+            styles.text,
+            { color: isFocused ? ACTIVE_COLOR : INACTIVE_COLOR },
+          ]}
+        >
+          {label}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 function CustomBottomNav({ state, descriptors, navigation }) {
   return (
     <View style={styles.container}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
+      <View style={styles.innerContainer}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+                ? options.title
+                : route.name;
 
-        const isFocused = state.index === index;
+          const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
+            }
+          };
 
-        return (
-          <AnimatedTouchableOpacity
-            layout={LinearTransition.springify().mass(0.5)}
-            key={route.key}
-            onPress={onPress}
-            style={[
-              styles.tabItem,
-              { backgroundColor: isFocused ? SECONDARY_COLOR : "transparent" },
-            ]}
-          >
-            {getIconByRouteName(
-              route.name,
-              isFocused ? PRIMARY_COLOR : SECONDARY_COLOR
-            )}
-            {isFocused && (
-              <Animated.Text
-                entering={FadeIn.duration(200)}
-                exiting={FadeOut.duration(200)}
-                style={styles.text}
-              >
-                {label}
-              </Animated.Text>
-            )}
-          </AnimatedTouchableOpacity>
-        );
-      })}
+          return (
+            <AnimatedTabItem
+              key={route.key}
+              isFocused={isFocused}
+              onPress={onPress}
+              label={label}
+              routeName={route.name}
+            />
+          );
+        })}
+      </View>
     </View>
   );
-
-  function getIconByRouteName(routeName, color) {
-    switch (routeName) {
-      case "HomeStack":
-        return <AntDesign name="home" size={24} color={color} />;
-      case "CalendarScreen":
-        return <AntDesign name="calendar" size={24} color={color} />;
-      case "PastScreen":
-        return <AntDesign name="folderopen" size={24} color={color} />;
-      default:
-        return <AntDesign name="home" size={24} color={color} />;
-    }
-  }
 }
 
 function BottomNav() {
   return (
     <Tab.Navigator
+      initialRouteName="HomeStack"
       tabBar={(props) => <CustomBottomNav {...props} />}
       screenOptions={{
         tabBarShowLabel: false,
       }}
     >
       <Tab.Screen
-        name="PastScreen"
-        component={PastScreen}
-        options={{ ...baseHeaderOptions, title: "Past" }}
-      />
-      <Tab.Screen
         name="HomeStack"
         component={HomeStack}
         options={{ title: "Home", headerShown: false }}
       />
       <Tab.Screen
-        name="CalendarScreen"
-        component={CalenderScreen}
-        options={{ ...baseHeaderOptions, title: "Calendar" }}
+        name="PastScreen"
+        component={PastScreen}
+        options={{ title: "Past", headerShown: false }}
       />
     </Tab.Navigator>
   );
@@ -144,34 +126,29 @@ function BottomNav() {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
+    backgroundColor: "white",
+    paddingBottom: hp("5%"),
+  },
+  innerContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: PRIMARY_COLOR,
-    width: wp("80%"),
-    alignSelf: "center",
-    bottom: hp("6%"),
-    borderRadius: 40,
-    paddingVertical: wp("4%"),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    gap: wp("3%"),
+    paddingVertical: wp("2%"),
   },
   tabItem: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flex: 1,
     alignItems: "center",
-    height: hp("4.5%"),
-    paddingHorizontal: wp("3%"),
-    borderRadius: 30,
+    justifyContent: "center",
+  },
+  activePill: {
+    position: "absolute",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    borderRadius: 20,
+    width: "40%",
+    height: "100%",
   },
   text: {
-    color: PRIMARY_COLOR,
-    marginLeft: wp("2%"),
-    fontWeight: "500",
+    fontSize: 12,
+    fontWeight: "600",
   },
 });
 

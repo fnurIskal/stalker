@@ -1,8 +1,9 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, FlatList } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { getMyHabits } from "../services/HabitService";
 import PastHabitDetails from "./PastHabitDetails";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function PastHabitsScreen() {
   const [habits, setHabits] = useState(null);
@@ -25,12 +26,15 @@ export default function PastHabitsScreen() {
     );
 
   return (
-    <>
-      {habits.map((habit, index) => (
-        <View key={index}>
-          <PastHabitDetails habit={habit} />
-        </View>
-      ))}
-    </>
+    <FlatList
+      data={habits}
+      renderItem={({ item }) => <PastHabitDetails habit={item} />}
+      keyExtractor={(item) => item.id.toString()}
+      ItemSeparatorComponent={() => <View style={{ height: hp("2%") }} />}
+      contentContainerStyle={{
+        paddingBottom: hp("5%"),
+        paddingHorizontal: hp("1%"),
+      }}
+    />
   );
 }

@@ -12,23 +12,7 @@ export default function HomeStack() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          headerTitle: "Stalker",
-          headerStyle: {
-            backgroundColor: "#f9f6ed",
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
-          headerTitleAlign: "center",
-          headerTintColor: "#130057",
-          headerTitleStyle: { fontWeight: "bold" },
-          headerRight: () => (
-            <View style={{ marginRight: wp("5%") }}>
-              <AntDesign name="setting" size={30} color="black" />
-            </View>
-          ),
-        }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

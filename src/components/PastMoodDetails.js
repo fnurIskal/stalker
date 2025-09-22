@@ -59,10 +59,7 @@ export default function PastMoodDetails({ mood }) {
         flex: 1,
         backgroundColor: "#fbf7ea",
         shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 4,

@@ -45,7 +45,7 @@ function AppStack() {
         options={({ navigation }) => ({
           headerTitle: "",
           headerStyle: {
-            backgroundColor: "#f9f6ed",
+            backgroundColor: "cyan",
             elevation: 0,
             shadowOpacity: 0,
             borderBottomWidth: 0,
@@ -70,7 +70,7 @@ function AppStack() {
         options={({ navigation }) => ({
           headerTitle: "",
           headerStyle: {
-            backgroundColor: "#f9f6ed",
+            backgroundColor: "cyan",
             elevation: 0,
             shadowOpacity: 0,
             borderBottomWidth: 0,
@@ -95,7 +95,7 @@ function AppStack() {
         options={({ navigation }) => ({
           headerTitle: "",
           headerStyle: {
-            backgroundColor: "#f9f6ed",
+            backgroundColor: "cyan",
             elevation: 0,
             shadowOpacity: 0,
             borderBottomWidth: 0,

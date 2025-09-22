@@ -1,14 +1,22 @@
-import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
-import { useState, useLayoutEffect, useEffect, useCallback } from "react";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import WeekCalendar from "../components/WeekCalendar";
-import { useSelector, useDispatch } from "react-redux";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  ScrollView,
+  ImageBackground,
+} from "react-native";
+import { useState } from "react";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import PremiumModal from "../components/PremiumModal";
+
 export default function HomeScreen({ navigation }) {
   const selectedEmojiType = useSelector((state) => state.mood.value);
-  const [modalVisible, setModalVisible] = useState(false);
-  console.log(selectedEmojiType.name);
+
   if (!selectedEmojiType || !Array.isArray(selectedEmojiType.data)) {
     return (
       <View
@@ -23,26 +31,6 @@ export default function HomeScreen({ navigation }) {
       </View>
     );
   }
-
-  const openPremiumModal = () => {
-    setModalVisible(true);
-  };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity
-          onPress={openPremiumModal}
-          style={{ marginLeft: wp("5%") }}
-        >
-          <MaterialCommunityIcons name="crown" size={30} color="black" />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
-
-  const topRow = selectedEmojiType.data.slice(0, 4);
-  const bottomRow = selectedEmojiType.data.slice(4);
 
   const CategoryPill = ({ icon, label }) => (
     <View
@@ -65,153 +53,163 @@ export default function HomeScreen({ navigation }) {
   );
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#f9f6ed",
-        padding: wp("4%"),
+    <ScrollView
+      contentContainerStyle={{
+        paddingTop: hp("5%"),
       }}
     >
-      <Pressable
-        onPress={() => navigation.navigate("MainMoodScreen")}
-        style={{ height: wp("67%") }}
-        className="bg-[#fcf6dd] rounded-2xl elevation-xl"
-      >
+      <ImageBackground
+        source={require("../../assets/bg.jpg")}
+        resizeMode="cover"
+        className="inset-0 absolute"
+        imageStyle={{ height: hp("40%") }}
+      />
+      <Text className="color-[#fec200] font-bold text-4xl text-center">
+        Stalker
+      </Text>
+      <View style={{ gap: wp("2%") }}>
         <Image
-          style={{
-            position: "absolute",
-            right: wp("-6%"),
-            top: wp("-6%"),
-            width: wp("43%"),
-            height: wp("43%"),
-          }}
-          source={require("../../assets/stalkerIcon.png")}
+          source={require("../../assets/char.png")}
+          style={{ height: 200, width: 200, alignSelf: "center" }}
         />
-        <Text
-          style={{ padding: wp("4%"), paddingTop: wp("10%") }}
-          className="font-extrabold text-4xl color-[#3e8440]"
-        >
-          How Are You{"\n"}Feeling Today?
-        </Text>
-        <Text
-          style={{ paddingHorizontal: wp("4%") }}
-          className="font-light text-sm color-[#3e8440]"
-        >
-          Press and Select Your Mood
-        </Text>
-
-        <View style={{ marginTop: wp("5%") }}>
-          {[topRow, bottomRow].map((row, rowIndex) => (
+      </View>
+      <View
+        style={{
+          padding: wp("4%"),
+          backgroundColor: "#fff",
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+          marginTop: wp("12%"),
+          gap: wp("10%"),
+        }}
+      >
+        <View>
+          <View
+            className="absolute bg-white elevation-lg self-center rounded-xl items-center justify-center border"
+            style={{
+              width: wp("80%"),
+              height: hp("7%"),
+              zIndex: 10,
+              top: wp("-12%"),
+            }}
+          >
+            <Text className="color-[#fec200] text-xl">
+              How are you feeling today?
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => navigation.navigate("MainMoodScreen")}
+            style={{
+              paddingVertical: wp("5%"),
+            }}
+            className="bg-[#fefdf1] rounded-2xl elevation-lg border"
+          >
+            <Text
+              style={{ paddingHorizontal: wp("4%") }}
+              className="font-medium text-base color-black"
+            >
+              Click and select your mood
+            </Text>
             <View
-              key={rowIndex}
               style={{
                 flexDirection: "row",
-                justifyContent: "center",
-                marginBottom: wp("3%"),
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+                paddingHorizontal: wp("4%"),
+                marginTop: wp("5%"),
               }}
             >
-              {row.map((item) => (
+              {selectedEmojiType.data.map((item) => (
                 <View
                   key={item.value}
                   style={{
-                    alignItems: "center",
-                    marginHorizontal: wp("1%"),
+                    width: "48%",
                     flexDirection: "row",
-                    backgroundColor: "#fffae6",
-                    gap: wp("1%"),
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#01ad47",
                     borderRadius: 12,
-                    paddingHorizontal: wp("1%"),
-                    paddingVertical: wp("1%"),
-                    borderWidth: 1,
-                    borderColor: "#3e8440",
+                    padding: wp("2%"),
+                    marginBottom: wp("2%"),
+                    elevation: 2,
+                    gap: wp("2%"),
                   }}
                 >
                   <Image
                     source={item.file}
                     style={{
-                      width: wp("7%"),
-                      height: wp("7%"),
+                      width: wp("8%"),
+                      height: wp("8%"),
                       resizeMode: "contain",
                     }}
                   />
-                  <Text className="font-light text-sm">{item.name}</Text>
+                  <Text className="font-bold text-base text-white">
+                    {item.name}
+                  </Text>
                 </View>
               ))}
             </View>
-          ))}
+          </Pressable>
         </View>
-      </Pressable>
-      {/* Habit Tracker */}
-      <Pressable
-        onPress={() => navigation.navigate("HabitSelectPage")}
-        style={{ height: wp("67%"), marginTop: wp("5%") }}
-        className="bg-[#fcf6dd] rounded-2xl elevation-xl"
-      >
-        <Image
-          style={{
-            position: "absolute",
-            left: wp("-9%"),
-            top: wp("-4%"),
-            width: wp("43%"),
-            height: wp("43%"),
-          }}
-          source={require("../../assets/stalkerIcon.png")}
-        />
-        <Text
-          style={{ paddingHorizontal: wp("4%"), paddingTop: wp("5%") }}
-          className="font-extrabold self-end text-4xl color-[#3e8440]"
-        >
-          Did You Keep Up
-        </Text>
-        <Text
-          style={{ paddingHorizontal: wp("4%") }}
-          className="font-extrabold self-end text-4xl color-[#3e8440]"
-        >
-          Today?
-        </Text>
-        <Text
-          style={{ padding: wp("3%") }}
-          className="font-light self-end text-sm color-[#3e8440]"
-        >
-          Build Your Streak Today
-        </Text>
-        <View
-          style={{
-            flexDirection: "column",
-            alignItems: "center",
-            marginBottom: wp("3%"),
-            marginTop: wp("5%"),
-          }}
-        >
+        <View>
           <View
+            className="absolute bg-white elevation-lg self-center rounded-xl items-center justify-center border"
             style={{
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              marginBottom: wp("2%"),
-              width: wp("90%"),
-            }}
-          >
-            <CategoryPill icon="brain" label="Personal" />
-            <CategoryPill icon="meditation" label="Health" />
-            <CategoryPill icon="wallet" label="Financial" />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "flex-end",
               width: wp("80%"),
+              height: hp("7%"),
+              zIndex: 10,
+              top: wp("-7%"),
             }}
           >
-            <CategoryPill icon="palette" label="Hobby" />
-            <CategoryPill icon="stop-circle" label="Addiction" />
+            <Text className="color-[#fec200] text-xl">
+              Did you keep up today?
+            </Text>
           </View>
+          <Pressable
+            onPress={() => navigation.navigate("HabitSelectPage")}
+            style={{ height: wp("67%"), marginTop: wp("5%") }}
+            className="bg-[#fefdf1] rounded-2xl elevation-lg border"
+          >
+            <Text
+              style={{ padding: wp("3%") }}
+              className="font-light self-end text-sm color-[#3e8440]"
+            >
+              Build Your Streak Today
+            </Text>
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginBottom: wp("3%"),
+                marginTop: wp("5%"),
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  marginBottom: wp("2%"),
+                  width: wp("90%"),
+                }}
+              >
+                <CategoryPill icon="brain" label="Personal" />
+                <CategoryPill icon="meditation" label="Health" />
+                <CategoryPill icon="wallet" label="Financial" />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  width: wp("80%"),
+                }}
+              >
+                <CategoryPill icon="palette" label="Hobby" />
+                <CategoryPill icon="stop-circle" label="Addiction" />
+              </View>
+            </View>
+          </Pressable>
         </View>
-      </Pressable>
-      {/* <WeekCalendar /> */}
-      <PremiumModal
-        visible={modalVisible}
-        onDissmis={() => setModalVisible(false)}
-      />
-    </View>
+      </View>
+    </ScrollView>
   );
 }

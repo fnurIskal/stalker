@@ -1,36 +1,48 @@
-import { View, Text, SafeAreaView } from "react-native";
+import { View, SafeAreaView } from "react-native";
 import React, { useState } from "react";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { SegmentedButtons } from "react-native-paper";
-import YearlyDotCalendar from "../components/YearlyDotCalendar";
+import HabitsCalendarScreen from "../components/HabitsCalendarScreen";
 
 export default function CalenderScreen() {
-  const [value, setValue] = useState();
+  const [screen, setScreen] = useState("habits");
+
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#f9f6ed",
-        padding: wp("4%"),
-      }}
-    >
-      <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f9f6ed" }}>
+      <View
+        style={{
+          flex: 1,
+          padding: wp("4%"),
+          gap: wp("5%"),
+        }}
+      >
         <SegmentedButtons
-          value={value}
-          onValueChange={setValue}
+          value={screen}
+          onValueChange={setScreen}
           buttons={[
             {
-              value: "monthly",
-              label: "Monthly",
+              value: "moods",
+              label: "Moods",
+              style: {
+                backgroundColor: screen === "moods" ? "#3e8440" : "white",
+              },
+              checkedColor: screen === "moods" ? "white" : "#3e8440",
             },
             {
-              value: "yearly",
-              label: "Yearly",
+              value: "habits",
+              label: "Habits",
+              style: {
+                backgroundColor: screen === "habits" ? "#3e8440" : "white",
+              },
+              checkedColor: screen === "habits" ? "white" : "#3e8440",
             },
           ]}
         />
-      </SafeAreaView>
-      {value === "yearly" && <YearlyDotCalendar />}
-    </View>
+        {screen === "habits" && <HabitsCalendarScreen />}
+      </View>
+    </SafeAreaView>
   );
 }
