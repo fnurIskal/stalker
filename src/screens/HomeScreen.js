@@ -13,6 +13,9 @@ import {
 } from "react-native-responsive-screen";
 import { useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Feather from "@expo/vector-icons/Feather";
+import Entypo from "@expo/vector-icons/Entypo";
+import PastMoodsScreen from "../components/PastMoodsScreen";
 
 export default function HomeScreen({ navigation }) {
   const selectedEmojiType = useSelector((state) => state.mood.value);
@@ -85,7 +88,7 @@ export default function HomeScreen({ navigation }) {
       >
         <View>
           <View
-            className="absolute bg-white elevation-lg self-center rounded-xl items-center justify-center border"
+            className="absolute  bg-white elevation-lg self-center rounded-xl items-center justify-center border"
             style={{
               width: wp("80%"),
               height: hp("7%"),
@@ -104,7 +107,42 @@ export default function HomeScreen({ navigation }) {
             }}
             className="bg-[#fefdf1] rounded-2xl elevation-lg border"
           >
-            <Text
+            <View
+              style={{ paddingTop: wp("10%") }}
+              className=" items-center gap-2 justify-center mb-4"
+            >
+              <Feather name="plus-circle" size={24} color="#fec200" />
+              <Text className="text-gray-700">Record your mood</Text>
+            </View>
+            <View
+              style={{ padding: wp("6%") }}
+              className="flex-row flex-wrap justify-around p-4"
+            >
+              <View style={{ gap: wp("2%") }} className="items-center">
+                <Entypo name="emoji-happy" size={24} color="#01ad47" />
+                <Text className="text-[#01ad47]">Feelings</Text>
+              </View>
+
+              <View style={{ gap: wp("2%") }} className="items-center">
+                <Feather name="camera" size={24} color="#01ad47" />
+                <Text className="text-[#01ad47]">Photo</Text>
+              </View>
+
+              <View style={{ gap: wp("2%") }} className="items-center">
+                <Feather name="mic" size={24} color="#01ad47" />
+                <Text className="text-[#01ad47]">Voice</Text>
+              </View>
+
+              <View style={{ gap: wp("2%") }} className="items-center">
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={24}
+                  color="#01ad47"
+                />
+                <Text className="text-[#01ad47]">Note</Text>
+              </View>
+            </View>
+            {/* <Text
               style={{ paddingHorizontal: wp("4%") }}
               className="font-medium text-base color-black"
             >
@@ -147,11 +185,11 @@ export default function HomeScreen({ navigation }) {
                     {item.name}
                   </Text>
                 </View>
-              ))}
-            </View>
+              ))} */}
+            {/* </View> */}
           </Pressable>
         </View>
-        <View>
+        {/* <View>
           <View
             className="absolute bg-white elevation-lg self-center rounded-xl items-center justify-center border"
             style={{
@@ -208,7 +246,9 @@ export default function HomeScreen({ navigation }) {
               </View>
             </View>
           </Pressable>
-        </View>
+        </View> */}
+
+        <PastMoodsScreen />
       </View>
     </ScrollView>
   );

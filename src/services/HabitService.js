@@ -30,10 +30,12 @@ export const insertHabit = async (
 
 export const getMyHabits = async () => {
   const supabase = await getSupabaseClient();
+  const deviceId = await getDeviceId();
 
   const { data, error } = await supabase
     .from("daily_habits")
     .select("*")
+    .eq("device_id", deviceId)
     .order("id", { ascending: false });
 
   if (error) {

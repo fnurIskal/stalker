@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { AllEmojis } from "../data/DefaultImages";
 
 export default function PastMoodDetails({ mood }) {
   const selectedEmojiType = useSelector((state) => state.mood.value);
@@ -18,8 +19,14 @@ export default function PastMoodDetails({ mood }) {
   const soundRef = useRef(null);
 
   const getEmojiFile = (selectedEmojiType, moodType) => {
-    return selectedEmojiType?.data.find((item) => item.value === moodType)
-      ?.file;
+    // 1. Öncelikle mevcut seçili temada emojiyi ara.
+    let emoji = selectedEmojiType?.data.find((item) => item.value === moodType);
+    if (emoji) return emoji.file;
+
+    // 2. Eğer mevcut temada bulunamazsa, tüm temaları gezerek emojiyi bul.
+    const allEmojiData = AllEmojis.flatMap((theme) => theme.data);
+    emoji = allEmojiData.find((item) => item.value === moodType);
+    return emoji?.file;
   };
 
   const togglePlay = async (mood) => {
@@ -88,14 +95,6 @@ export default function PastMoodDetails({ mood }) {
               {dayjs(mood.created_at).format("YYYY-MM-DD HH:mm")}
             </Text>
           </View>
-        </View>
-        <View className="flex-row items-center" style={{ gap: wp("2%") }}>
-          <Ionicons name="share-social" size={20} color="black" />
-          <MaterialCommunityIcons
-            name="dots-vertical"
-            size={24}
-            color="black"
-          />
         </View>
       </View>
       {/* note */}

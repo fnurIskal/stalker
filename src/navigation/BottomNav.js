@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeStack from "./HomeStack";
 import PastScreen from "../screens/PastScreen";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
   widthPercentageToDP as wp,
@@ -12,9 +11,14 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import Entypo from "@expo/vector-icons/Entypo";
+import PremiumModal from "../components/PremiumModal";
+import Feather from "@expo/vector-icons/Feather";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
-const PRIMARY_COLOR = "#3e8440";
-const ACTIVE_COLOR = "#fff";
+const PRIMARY_COLOR = "#a8df8e";
+const ACTIVE_COLOR = "#01ad47";
 const INACTIVE_COLOR = "rgba(255, 255, 255, 0.7)";
 
 const Tab = createBottomTabNavigator();
@@ -22,25 +26,21 @@ const Tab = createBottomTabNavigator();
 function getIconByRouteName(routeName, color) {
   switch (routeName) {
     case "HomeStack":
-      return <AntDesign name="home" size={24} color={color} />;
+      return <Entypo name="emoji-happy" size={20} color={color} />;
     case "PastScreen":
-      return <AntDesign name="folderopen" size={24} color={color} />;
+      return (
+        <MaterialCommunityIcons name="bookshelf" size={24} color={color} />
+      );
+    case "PremiumModal":
+      return <MaterialCommunityIcons name="crown" size={24} color={color} />;
     default:
-      return <AntDesign name="home" size={24} color={color} />;
+      return <Entypo name="emoji-happy" size={20} color={color} />;
   }
 }
 
 const AnimatedTabItem = ({ isFocused, onPress, label, routeName }) => {
-  const animatedPillStyle = useAnimatedStyle(() => {
-    return {
-      opacity: withSpring(isFocused ? 1 : 0),
-      transform: [{ scale: withSpring(isFocused ? 1 : 0.5) }],
-    };
-  });
-
   return (
     <TouchableOpacity onPress={onPress} style={styles.tabItem}>
-      <Animated.View style={[styles.activePill, animatedPillStyle]} />
       <View style={{ alignItems: "center", gap: 4 }}>
         {getIconByRouteName(
           routeName,
@@ -60,8 +60,10 @@ const AnimatedTabItem = ({ isFocused, onPress, label, routeName }) => {
 };
 
 function CustomBottomNav({ state, descriptors, navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.innerContainer}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -102,6 +104,8 @@ function CustomBottomNav({ state, descriptors, navigation }) {
 }
 
 function BottomNav() {
+  const navigation = useNavigation();
+
   return (
     <Tab.Navigator
       initialRouteName="HomeStack"
@@ -113,12 +117,41 @@ function BottomNav() {
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
-        options={{ title: "Home", headerShown: false }}
+        options={{ title: "Moods", headerShown: false }}
       />
       <Tab.Screen
         name="PastScreen"
         component={PastScreen}
-        options={{ title: "Past", headerShown: false }}
+        options={{
+          title: "Habits",
+          headerTitleAlign: "center",
+          headerRight: () => (
+            <Feather
+              style={{ marginRight: wp("5%") }}
+              name="plus"
+              size={24}
+              color="black"
+              onPress={() => navigation.navigate("HabitSelectPage")}
+            />
+          ),
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: "#f9f6ed",
+          },
+        }}
+      />
+      <Tab.Screen
+        name="PremiumModal"
+        component={PremiumModal}
+        options={{
+          title: "Premium",
+          headerTitle: "Choose your emoji theme",
+          headerTitleAlign: "center",
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: "#f9f6ed",
+          },
+        }}
       />
     </Tab.Navigator>
   );
@@ -127,7 +160,6 @@ function BottomNav() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    paddingBottom: hp("5%"),
   },
   innerContainer: {
     flexDirection: "row",
